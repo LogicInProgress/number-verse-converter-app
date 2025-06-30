@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -56,7 +57,7 @@ const NumberConverter = () => {
     setInputValue(value.toUpperCase());
   };
 
-  const conversionResults = [
+  const allConversionResults = [
     {
       title: "Decimal",
       subtitle: "Base 10",
@@ -86,6 +87,9 @@ const NumberConverter = () => {
       color: "purple" as const
     }
   ];
+
+  // Filter out the selected input system from the results
+  const conversionResults = allConversionResults.filter(result => !result.isSource);
 
   return (
     <div className="max-w-3xl mx-auto space-y-8">
@@ -143,7 +147,7 @@ const NumberConverter = () => {
         <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-md">
           <CardHeader className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-t-lg">
             <CardTitle className="text-xl text-gray-800 font-light">Conversion Results</CardTitle>
-            <p className="text-sm text-gray-600 mt-1">Your number converted to all number systems</p>
+            <p className="text-sm text-gray-600 mt-1">Your number converted to other number systems</p>
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-gray-100">
