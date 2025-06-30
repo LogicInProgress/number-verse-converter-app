@@ -1,7 +1,6 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy } from "lucide-react";
+import { Copy, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
@@ -17,10 +16,17 @@ const ConversionResult = ({ title, subtitle, value, isSource, color }: Conversio
   const { toast } = useToast();
 
   const colorClasses = {
-    blue: "from-blue-500 to-blue-600",
-    green: "from-green-500 to-green-600",
-    orange: "from-orange-500 to-orange-600",
-    purple: "from-purple-500 to-purple-600"
+    blue: "bg-blue-500",
+    green: "bg-green-500",
+    orange: "bg-orange-500",
+    purple: "bg-purple-500"
+  };
+
+  const textColorClasses = {
+    blue: "text-blue-600",
+    green: "text-green-600",
+    orange: "text-orange-600",
+    purple: "text-purple-600"
   };
 
   const handleCopy = async () => {
@@ -41,45 +47,46 @@ const ConversionResult = ({ title, subtitle, value, isSource, color }: Conversio
   };
 
   return (
-    <Card className={`relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg ${
-      isSource ? "ring-2 ring-blue-500 bg-blue-50/50" : "bg-white/80"
-    } backdrop-blur-sm`}>
-      <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${colorClasses[color]}`} />
-      
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between group">
+      <div className="flex items-center space-x-4 flex-1">
+        <div className="flex items-center space-x-3">
+          <div className={`w-3 h-3 rounded-full ${colorClasses[color]}`} />
           <div>
-            <CardTitle className="text-lg font-semibold text-gray-800">{title}</CardTitle>
+            <div className="flex items-center gap-2">
+              <h3 className={`font-semibold ${textColorClasses[color]}`}>{title}</h3>
+              {isSource && (
+                <Badge variant="secondary" className="text-xs px-2 py-0.5">
+                  Source
+                </Badge>
+              )}
+            </div>
             <p className="text-sm text-gray-500">{subtitle}</p>
           </div>
-          {isSource && (
-            <Badge variant="secondary" className="text-xs">
-              Input
-            </Badge>
-          )}
         </div>
-      </CardHeader>
-      
-      <CardContent className="pt-0">
-        <div className="flex items-center justify-between">
-          <div className="flex-1 mr-2">
-            <p className="text-xl font-mono font-bold text-gray-800 break-all">
-              {value || "—"}
-            </p>
-          </div>
-          {value && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleCopy}
-              className="h-8 w-8 p-0 hover:bg-gray-100"
-            >
-              <Copy className="h-4 w-4" />
-            </Button>
-          )}
+        
+        {!isSource && (
+          <ArrowRight className="w-4 h-4 text-gray-400 ml-4" />
+        )}
+      </div>
+
+      <div className="flex items-center space-x-3">
+        <div className="text-right">
+          <p className="text-lg font-mono font-bold text-gray-800 break-all">
+            {value || "—"}
+          </p>
         </div>
-      </CardContent>
-    </Card>
+        {value && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleCopy}
+            className="h-8 w-8 p-0 hover:bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <Copy className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+    </div>
   );
 };
 

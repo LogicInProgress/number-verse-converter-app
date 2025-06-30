@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -57,19 +56,53 @@ const NumberConverter = () => {
     setInputValue(value.toUpperCase());
   };
 
+  const conversionResults = [
+    {
+      title: "Decimal",
+      subtitle: "Base 10",
+      value: conversions.decimal,
+      isSource: inputSystem === "decimal",
+      color: "blue" as const
+    },
+    {
+      title: "Binary",
+      subtitle: "Base 2",
+      value: conversions.binary,
+      isSource: inputSystem === "binary",
+      color: "green" as const
+    },
+    {
+      title: "Octal",
+      subtitle: "Base 8",
+      value: conversions.octal,
+      isSource: inputSystem === "octal",
+      color: "orange" as const
+    },
+    {
+      title: "Hexadecimal",
+      subtitle: "Base 16",
+      value: conversions.hexadecimal,
+      isSource: inputSystem === "hexadecimal",
+      color: "purple" as const
+    }
+  ];
+
   return (
-    <div className="space-y-6">
+    <div className="max-w-3xl mx-auto space-y-8">
       {/* Input Section */}
-      <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="text-2xl text-gray-800">Input Number</CardTitle>
+      <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-md">
+        <CardHeader className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-t-lg">
+          <CardTitle className="text-2xl text-gray-800 font-light">Convert Number System</CardTitle>
+          <p className="text-sm text-gray-600 mt-1">Enter a number in any base and see its equivalent in all other bases</p>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="number-system">Number System</Label>
+        <CardContent className="p-8 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <Label htmlFor="number-system" className="text-sm font-medium text-gray-700">
+                Source Number System
+              </Label>
               <Select value={inputSystem} onValueChange={(value: NumberSystem) => setInputSystem(value)}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-12 bg-white border-2 focus:border-blue-500 transition-colors">
                   <SelectValue placeholder="Select number system" />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
@@ -81,19 +114,22 @@ const NumberConverter = () => {
               </Select>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="number-input">Enter Number</Label>
+            <div className="space-y-3">
+              <Label htmlFor="number-input" className="text-sm font-medium text-gray-700">
+                Enter Number
+              </Label>
               <Input
                 id="number-input"
                 value={inputValue}
                 onChange={(e) => handleInputChange(e.target.value)}
                 placeholder={`Enter ${getNumberSystemName(inputSystem)} number...`}
-                className={`transition-colors ${
-                  !isValid ? "border-red-500 focus:border-red-500" : "border-gray-300"
+                className={`h-12 bg-white border-2 transition-colors font-mono text-lg ${
+                  !isValid ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-500"
                 }`}
               />
               {!isValid && (
-                <p className="text-sm text-red-500">
+                <p className="text-sm text-red-500 flex items-center gap-1">
+                  <span className="w-1 h-1 bg-red-500 rounded-full"></span>
                   Invalid {getNumberSystemName(inputSystem)} number
                 </p>
               )}
@@ -104,36 +140,27 @@ const NumberConverter = () => {
 
       {/* Results Section */}
       {inputValue.trim() && isValid && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <ConversionResult
-            title="Decimal"
-            subtitle="Base 10"
-            value={conversions.decimal}
-            isSource={inputSystem === "decimal"}
-            color="blue"
-          />
-          <ConversionResult
-            title="Binary"
-            subtitle="Base 2"
-            value={conversions.binary}
-            isSource={inputSystem === "binary"}
-            color="green"
-          />
-          <ConversionResult
-            title="Octal"
-            subtitle="Base 8"
-            value={conversions.octal}
-            isSource={inputSystem === "octal"}
-            color="orange"
-          />
-          <ConversionResult
-            title="Hexadecimal"
-            subtitle="Base 16"
-            value={conversions.hexadecimal}
-            isSource={inputSystem === "hexadecimal"}
-            color="purple"
-          />
-        </div>
+        <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-md">
+          <CardHeader className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-t-lg">
+            <CardTitle className="text-xl text-gray-800 font-light">Conversion Results</CardTitle>
+            <p className="text-sm text-gray-600 mt-1">Your number converted to all number systems</p>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-gray-100">
+              {conversionResults.map((result, index) => (
+                <div key={result.title} className="p-6 hover:bg-gray-50/50 transition-colors">
+                  <ConversionResult
+                    title={result.title}
+                    subtitle={result.subtitle}
+                    value={result.value}
+                    isSource={result.isSource}
+                    color={result.color}
+                  />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
