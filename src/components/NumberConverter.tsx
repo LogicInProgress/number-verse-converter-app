@@ -4,15 +4,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { HelpCircle } from "lucide-react";
 import { convertNumber, isValidNumber, getNumberSystemName } from "@/utils/numberConversions";
 import ConversionResult from "./ConversionResult";
+import ConversionExplanationModal from "./ConversionExplanationModal";
 
 type NumberSystem = "decimal" | "binary" | "octal" | "hexadecimal";
 
 const NumberConverter = () => {
   const [inputSystem, setInputSystem] = useState<NumberSystem>("decimal");
   const [inputValue, setInputValue] = useState("");
+  const [debouncedInputValue, setDebouncedInputValue] = useState("");
   const [isValid, setIsValid] = useState(true);
+  const [showExplanation, setShowExplanation] = useState(false);
   const [conversions, setConversions] = useState({
     decimal: "",
     binary: "",
@@ -20,8 +25,17 @@ const NumberConverter = () => {
     hexadecimal: ""
   });
 
+  // Debounce input value
   useEffect(() => {
-    if (!inputValue.trim()) {
+    const timer = setTimeout(() => {
+      setDebouncedInputValue(inputValue);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [inputValue]);
+
+  useEffect(() => {
+    if (!debouncedInputValue.trim()) {
       setConversions({
         decimal: "",
         binary: "",
@@ -32,15 +46,15 @@ const NumberConverter = () => {
       return;
     }
 
-    const valid = isValidNumber(inputValue, inputSystem);
+    const valid = isValidNumber(debouncedInputValue, inputSystem);
     setIsValid(valid);
 
     if (valid) {
       const results = {
-        decimal: convertNumber(inputValue, inputSystem, "decimal"),
-        binary: convertNumber(inputValue, inputSystem, "binary"),
-        octal: convertNumber(inputValue, inputSystem, "octal"),
-        hexadecimal: convertNumber(inputValue, inputSystem, "hexadecimal")
+        decimal: convertNumber(debouncedInputValue, inputSystem, "decimal"),
+        binary: convertNumber(debouncedInputValue, inputSystem, "binary"),
+        octal: convertNumber(debouncedInputValue, inputSystem, "octal"),
+        hexadecimal: convertNumber(debouncedInputValue, inputSystem, "hexadecimal")
       };
       setConversions(results);
     } else {
@@ -51,7 +65,7 @@ const NumberConverter = () => {
         hexadecimal: ""
       });
     }
-  }, [inputValue, inputSystem]);
+  }, [debouncedInputValue, inputSystem]);
 
   const handleInputChange = (value: string) => {
     setInputValue(value.toUpperCase());
@@ -143,7 +157,7 @@ const NumberConverter = () => {
       </Card>
 
       {/* Results Section */}
-      {inputValue.trim() && isValid && (
+      {debouncedInputValue.trim() && isValid && (
         <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-md">
           <CardHeader className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-t-lg">
             <CardTitle className="text-xl text-gray-800 font-light">Conversion Results</CardTitle>
@@ -163,9 +177,27 @@ const NumberConverter = () => {
                 </div>
               ))}
             </div>
+            <div className="p-6 border-t border-gray-100 bg-gray-50/30">
+              <Button
+                variant="ghost"
+                onClick={() => setShowExplanation(true)}
+                className="w-full justify-center gap-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+              >
+                <HelpCircle className="w-4 h-4" />
+                How does this conversion work?
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
+
+      <ConversionExplanationModal
+        isOpen={showExplanation}
+        onClose={() => setShowExplanation(false)}
+        fromSystem={inputSystem}
+        inputValue={debouncedInputValue}
+        conversions={conversions}
+      />
     </div>
   );
 };
