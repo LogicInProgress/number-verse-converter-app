@@ -1,5 +1,4 @@
 
-import { Badge } from "@/components/ui/badge";
 import { Copy, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -52,14 +51,7 @@ const ConversionResult = ({ title, subtitle, value, isSource, color }: Conversio
         <div className="flex items-center space-x-3">
           <div className={`w-3 h-3 rounded-full ${colorClasses[color]}`} />
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className={`font-semibold ${textColorClasses[color]}`}>{title}</h3>
-              {isSource && (
-                <Badge variant="secondary" className="text-xs px-2 py-0.5">
-                  Source
-                </Badge>
-              )}
-            </div>
+            <h3 className={`font-semibold ${textColorClasses[color]}`}>{title}</h3>
             <p className="text-sm text-gray-500">{subtitle}</p>
           </div>
         </div>
